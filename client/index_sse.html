@@ -1,0 +1,48 @@
+<html>
+    <head>
+            <title>Server Side Event</title>
+            <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    </head>
+    <body>
+        <button type="button" id="start">Start</button>
+        <button type="button" id="cancel">Cancel</button></br>
+        <script type="text/javascript">
+            (function() {
+                "use strict";
+
+                let eventSource = null;
+
+                $("#cancel").attr("disabled", true);
+
+                function init() {
+                    eventSource = new EventSource("http://127.0.0.1:3000/getids");
+
+                    eventSource.addEventListener('myEvent', (e) => {
+                        // listener for messages of type 'myEvent' only
+                        // e.data has the server data
+                        console.log("events sent", e);
+                        
+                    });
+                }
+
+                $("#start").on("click", (ev) => {
+                    init();
+                    $("#start").attr("disabled", true);
+                    $("#cancel").attr("disabled", false);
+                });
+
+                $("#cancel").on("click", (ev) => {
+                    eventSource.close();
+                    $("#cancel").attr("disabled", true);
+                    $("#start").attr("disabled", false);
+                });
+
+                /* eventSource.onmessage = (e) => {
+                    // e.data has the server data
+                    console.log("data sent", e);
+                    
+                }; */
+            }).call();
+        </script>
+    </body>
+</html>
